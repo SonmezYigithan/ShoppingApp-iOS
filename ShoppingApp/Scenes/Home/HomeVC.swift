@@ -23,9 +23,21 @@ class HomeVC: UIViewController {
     
     let sectionNames = ["Best Selling", "Special Offer"]
     
+    let scrollView: UIScrollView = {
+        let view = UIScrollView()
+        return view
+    }()
+    
+    let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        return stackView
+    }()
+    
     let bannerCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
+        layout.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 0)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.identifier)
         collectionView.showsHorizontalScrollIndicator = false
@@ -36,6 +48,7 @@ class HomeVC: UIViewController {
         let tableView = UITableView()
         tableView.showsVerticalScrollIndicator = false
         tableView.separatorStyle = .none
+        tableView.isScrollEnabled = false
         tableView.register(ProductCell.self, forCellReuseIdentifier: ProductCell.identifier)
         return tableView
     }()
@@ -49,8 +62,10 @@ class HomeVC: UIViewController {
     
     private func prepareView() {
         view.backgroundColor = .systemBackground
-        view.addSubview(tableView)
-        view.addSubview(bannerCollectionView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(stackView)
+        stackView.addArrangedSubview(bannerCollectionView)
+        stackView.addArrangedSubview(tableView)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -60,19 +75,34 @@ class HomeVC: UIViewController {
         applyConstraints()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.layoutIfNeeded()
+        tableView.snp.updateConstraints { make in
+            make.height.equalTo(tableView.contentSize.height)
+        }
+    }
+    
     // MARK: - Constraints
     
     private func applyConstraints() {
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        stackView.snp.makeConstraints { make in
+            make.top.leading.trailing.bottom.equalTo(scrollView)
+            make.width.equalTo(scrollView.snp.width)
+        }
+        
         bannerCollectionView.snp.makeConstraints { make in
             make.height.equalTo(200)
-            make.leading.equalTo(view.safeAreaLayoutGuide).offset(20)
-            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-20)
-            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.width.equalToSuperview()
         }
         
         tableView.snp.makeConstraints { make in
-            make.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
-            make.top.equalTo(bannerCollectionView.snp.bottom).offset(20)
+            make.height.equalTo(0)
+            make.width.equalToSuperview()
         }
     }
 }
