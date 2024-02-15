@@ -1,26 +1,28 @@
 //
-//  HomeProductTableViewCell.swift
+//  CategoryProductsVC.swift
 //  ShoppingApp
 //
-//  Created by Yiğithan Sönmez on 13.02.2024.
+//  Created by Yiğithan Sönmez on 15.02.2024.
 //
 
 import UIKit
 
-class HomeProductTableViewCell: UITableViewCell {
+protocol CategoryProductsVCProtocol {
+    func reloadCollectionView()
+}
+
+final class CategoryProductsVC: UIViewController {
     // MARK: - TypeAlias
     
     typealias Cell = HomeItemCollectionViewCell
     
     // MARK: - Properties
     
-    static let identifier = "HomeProductTableViewCell"
-    
-    var products = [Product]()
+    lazy var viewModel: CategoryProductsVMProtocol = CategoryProductsVM()
     
     let productCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
+        layout.scrollDirection = .vertical
         layout.sectionInset = .init(top: 0, left: 15, bottom: 0, right: 15)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(Cell.self, forCellWithReuseIdentifier: Cell.identifier)
@@ -30,55 +32,57 @@ class HomeProductTableViewCell: UITableViewCell {
     
     // MARK: - Life Cycle
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.view = self
         prepareView()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func configure(with categoryName: String) {
+        title = categoryName
+        viewModel.fetchAllProductsInCategory(category: categoryName)
     }
     
     private func prepareView() {
-        addSubview(productCollectionView)
+        view.addSubview(productCollectionView)
         
-        contentView.addSubview(productCollectionView)
         productCollectionView.dataSource = self
         productCollectionView.delegate = self
         
         applyConstraints()
     }
     
-    func configure(with products: [Product]) {
-        self.products = products
-        productCollectionView.reloadData()
-    }
-    
     // MARK: - Constraints
     
     private func applyConstraints() {
         productCollectionView.snp.makeConstraints { make in
-            make.edges.equalTo(self)
+            make.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
 }
 
 // MARK: - UICollectionViewDelegate
 
-extension HomeProductTableViewCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension CategoryProductsVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return products.count
+        return viewModel.products.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.identifier, for: indexPath) as? Cell else {
             return UICollectionViewCell()
         }
-        cell.configure(with: products[indexPath.row])
+        cell.configure(with: viewModel.products[indexPath.item])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: frame.width/2, height: 300)
+        return CGSize(width: view.frame.width/2 - 20 , height: 300)
+    }
+}
+
+extension CategoryProductsVC: CategoryProductsVCProtocol {
+    func reloadCollectionView() {
+        productCollectionView.reloadData()
     }
 }

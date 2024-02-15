@@ -12,7 +12,7 @@ class TabBarVC: UITabBarController {
         view.backgroundColor = .systemBackground
         
         let homeVC = UINavigationController(rootViewController: HomeVC())
-        let SearchProductVC = UINavigationController(rootViewController: SearchProductVC())
+        let SearchProductVC = UINavigationController(rootViewController: CategoriesVC())
         let CartVC = UINavigationController(rootViewController: CartVC())
         
         homeVC.tabBarItem.selectedImage = UIImage(systemName: "house.fill")

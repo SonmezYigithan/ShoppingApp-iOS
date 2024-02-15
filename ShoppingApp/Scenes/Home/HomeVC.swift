@@ -8,9 +8,8 @@
 import UIKit
 import SnapKit
 
-enum Sections: Int, CaseIterable {
-    case BestSelling
-    case SpecialOffer
+protocol HomeVCProtocol {
+    func reloadTableView()
 }
 
 class HomeVC: UIViewController {
@@ -20,6 +19,7 @@ class HomeVC: UIViewController {
     typealias ProductCell = HomeProductTableViewCell
     
     // MARK: - Properties
+    private lazy var viewModel: HomeVMProtocol = HomeVM()
     
     let sectionNames = ["Best Selling", "Special Offer"]
     
@@ -37,7 +37,7 @@ class HomeVC: UIViewController {
     let bannerCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 0)
+        layout.sectionInset = .init(top: 0, left: 15, bottom: 0, right: 15)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.identifier)
         collectionView.showsHorizontalScrollIndicator = false
@@ -57,6 +57,8 @@ class HomeVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        viewModel.view = self
+        viewModel.fetchBestSellingProducts()
         prepareView()
     }
     
@@ -96,7 +98,7 @@ class HomeVC: UIViewController {
         }
         
         bannerCollectionView.snp.makeConstraints { make in
-            make.height.equalTo(200)
+            make.height.equalTo(180)
             make.width.equalToSuperview()
         }
         
@@ -126,6 +128,7 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ProductCell.identifier, for: indexPath) as? ProductCell else {
             return UITableViewCell()
         }
+        cell.configure(with: viewModel.products)
         cell.selectionStyle = .none
         return cell
     }
@@ -151,6 +154,12 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollec
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width - 20, height: 200)
+        return CGSize(width: view.frame.width - 20, height: 180)
+    }
+}
+
+extension HomeVC: HomeVCProtocol {
+    func reloadTableView() {
+        tableView.reloadData()
     }
 }

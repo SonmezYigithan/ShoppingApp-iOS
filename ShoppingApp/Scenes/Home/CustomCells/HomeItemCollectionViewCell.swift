@@ -6,19 +6,21 @@
 //
 
 import UIKit
+import Kingfisher
 
 class HomeItemCollectionViewCell: UICollectionViewCell {
     static let identifier = "HomeItemCollectionViewCell"
     
     let productImage: UIImageView = {
         let image = UIImageView()
-        image.backgroundColor = .blue
+        image.contentMode = .scaleAspectFit
         return image
     }()
     
     let nameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 17)
+        label.numberOfLines = 2
         label.text = "Apple"
         return label
     }()
@@ -27,15 +29,6 @@ class HomeItemCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.text = "$4.99"
         return label
-    }()
-    
-    let addToCartButton: UIButton = {
-        let button = UIButton()
-        button.layer.cornerRadius = 6
-        button.configuration = .tinted()
-        button.configuration?.baseBackgroundColor = .systemGreen
-        button.configuration?.title = "+"
-        return button
     }()
     
     override init(frame: CGRect) {
@@ -55,16 +48,24 @@ class HomeItemCollectionViewCell: UICollectionViewCell {
         addSubview(productImage)
         addSubview(nameLabel)
         addSubview(priceLabel)
-        addSubview(addToCartButton)
         
         applyConstraints()
+    }
+    
+    func configure(with product: Product) {
+        nameLabel.text = product.title
+        priceLabel.text = "$" + String(format: "%.2f", product.price)
+        
+        if let imageURL = URL(string: product.image) {
+            productImage.kf.setImage(with: imageURL)
+        }
     }
     
     private func applyConstraints() {
         productImage.snp.makeConstraints { make in
             make.leading.top.equalTo(self).offset(10)
             make.trailing.equalTo(-10)
-            make.height.equalTo(125)
+            make.height.equalTo(185)
         }
         
         nameLabel.snp.makeConstraints { make in
@@ -75,15 +76,8 @@ class HomeItemCollectionViewCell: UICollectionViewCell {
         
         priceLabel.snp.makeConstraints { make in
             make.leading.equalTo(self.snp.leading).offset(20)
-            make.trailing.equalTo(addToCartButton.snp.leading)
+            make.trailing.equalTo(self.snp.trailing)
             make.bottom.equalTo(self.snp.bottom).offset(-20)
-        }
-        
-        addToCartButton.snp.makeConstraints { make in
-            make.leading.equalTo(priceLabel.snp.trailing)
-            make.trailing.equalTo(self.snp.trailing).offset(-20)
-            make.bottom.equalTo(self.snp.bottom).offset(-20)
-            make.size.equalTo(CGSize(width: 50, height: 50))
         }
     }
 }

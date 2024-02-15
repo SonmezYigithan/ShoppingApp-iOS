@@ -7,16 +7,28 @@
 
 import Foundation
 
-protocol HomeVMProtocol {
+protocol HomeVMProtocol: AnyObject {
     var view: HomeVC? { get set }
+    var products: [Product] { get }
     
+    func fetchBestSellingProducts()
 }
 
 class HomeVM {
     weak var view: HomeVC?
-    
+    var products = [Product]()
 }
 
 extension HomeVM: HomeVMProtocol {
-    
+    func fetchBestSellingProducts() {
+        StoreAPIManager.shared.fetchAllProducts(limit: 5) { [weak self] result in
+            switch(result){
+            case .success(let products):
+                self?.products.append(contentsOf: products)
+                self?.view?.reloadTableView()
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
 }
