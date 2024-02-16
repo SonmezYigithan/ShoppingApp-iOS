@@ -8,14 +8,15 @@
 import Foundation
 
 protocol CategoryProductsVMProtocol {
-    var view: CategoryProductsVC? { get set }
+    var view: CategoryProductsVCProtocol? { get set }
     var products: [Product] { get }
     
     func fetchAllProductsInCategory(category: String)
+    func didSelectProduct(at index: Int)
 }
 
 class CategoryProductsVM {
-    weak var view: CategoryProductsVC?
+    weak var view: CategoryProductsVCProtocol?
     var products = [Product]()
 }
 
@@ -30,6 +31,12 @@ extension CategoryProductsVM: CategoryProductsVMProtocol {
                 print(error)
             }
         }
+    }
+    
+    func didSelectProduct(at index: Int) {
+        let vc = ProductDetailsVC()
+        vc.configure(with: products[index])
+        view?.navigateToProductDetails(vc: vc)
     }
 }
 

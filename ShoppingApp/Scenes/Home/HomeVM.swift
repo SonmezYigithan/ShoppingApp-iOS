@@ -12,6 +12,7 @@ protocol HomeVMProtocol: AnyObject {
     var products: [Product] { get }
     
     func fetchBestSellingProducts()
+    func didSelectProduct(at index: Int)
 }
 
 class HomeVM {
@@ -30,5 +31,11 @@ extension HomeVM: HomeVMProtocol {
                 print(error)
             }
         }
+    }
+    
+    func didSelectProduct(at index: Int) {
+        let vc = ProductDetailsVC()
+        vc.configure(with: products[index])
+        view?.navigateToProductDetails(vc: vc)
     }
 }

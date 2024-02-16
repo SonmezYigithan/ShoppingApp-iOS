@@ -10,6 +10,7 @@ import SnapKit
 
 protocol HomeVCProtocol {
     func reloadTableView()
+    func navigateToProductDetails(vc: ProductDetailsVC)
 }
 
 class HomeVC: UIViewController {
@@ -128,6 +129,7 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ProductCell.identifier, for: indexPath) as? ProductCell else {
             return UITableViewCell()
         }
+        cell.setViewModel(viewModel: viewModel)
         cell.configure(with: viewModel.products)
         cell.selectionStyle = .none
         return cell
@@ -161,5 +163,9 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollec
 extension HomeVC: HomeVCProtocol {
     func reloadTableView() {
         tableView.reloadData()
+    }
+    
+    func navigateToProductDetails(vc: ProductDetailsVC) {
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

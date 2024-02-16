@@ -7,8 +7,9 @@
 
 import UIKit
 
-protocol CategoryProductsVCProtocol {
+protocol CategoryProductsVCProtocol: AnyObject {
     func reloadCollectionView()
+    func navigateToProductDetails(vc: ProductDetailsVC)
 }
 
 final class CategoryProductsVC: UIViewController {
@@ -79,10 +80,18 @@ extension CategoryProductsVC: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width/2 - 20 , height: 300)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        viewModel.didSelectProduct(at: indexPath.item)
+    }
 }
 
 extension CategoryProductsVC: CategoryProductsVCProtocol {
     func reloadCollectionView() {
         productCollectionView.reloadData()
+    }
+    
+    func navigateToProductDetails(vc: ProductDetailsVC) {
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

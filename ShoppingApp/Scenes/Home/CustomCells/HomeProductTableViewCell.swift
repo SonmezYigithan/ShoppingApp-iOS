@@ -16,6 +16,8 @@ class HomeProductTableViewCell: UITableViewCell {
     
     static let identifier = "HomeProductTableViewCell"
     
+    weak var viewModel: HomeVMProtocol?
+    
     var products = [Product]()
     
     let productCollectionView: UICollectionView = {
@@ -47,6 +49,10 @@ class HomeProductTableViewCell: UITableViewCell {
         productCollectionView.delegate = self
         
         applyConstraints()
+    }
+    
+    func setViewModel(viewModel: HomeVMProtocol) {
+        self.viewModel = viewModel
     }
     
     func configure(with products: [Product]) {
@@ -81,4 +87,9 @@ extension HomeProductTableViewCell: UICollectionViewDelegate, UICollectionViewDa
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: frame.width/2, height: 300)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        viewModel?.didSelectProduct(at: indexPath.item)
+    }
+    
 }

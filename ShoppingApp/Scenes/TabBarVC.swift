@@ -12,21 +12,21 @@ class TabBarVC: UITabBarController {
         view.backgroundColor = .systemBackground
         
         let homeVC = UINavigationController(rootViewController: HomeVC())
-        let SearchProductVC = UINavigationController(rootViewController: CategoriesVC())
+        let CategoriesVC = UINavigationController(rootViewController: CategoriesVC())
         let CartVC = UINavigationController(rootViewController: CartVC())
         
         homeVC.tabBarItem.selectedImage = UIImage(systemName: "house.fill")
         homeVC.tabBarItem.image = UIImage(systemName: "house")
-        SearchProductVC.tabBarItem.image = UIImage(systemName: "magnifyingglass")
-        CartVC.tabBarItem.selectedImage = UIImage(systemName: "cart")
-        CartVC.tabBarItem.image = UIImage(systemName: "cart.fill")
+        CategoriesVC.tabBarItem.image = UIImage(systemName: "magnifyingglass")
+        CartVC.tabBarItem.selectedImage = UIImage(systemName: "cart.fill")
+        CartVC.tabBarItem.image = UIImage(systemName: "cart")
         
         homeVC.title = "Home"
-        SearchProductVC.title = "Search Product"
+        CategoriesVC.title = "Categories"
         CartVC.title = "Cart"
         
         tabBar.tintColor = .label
         
-        setViewControllers([homeVC, SearchProductVC, CartVC], animated: true)
+        setViewControllers([homeVC, CategoriesVC, CartVC], animated: true)
     }
 }
