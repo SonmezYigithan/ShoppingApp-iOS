@@ -13,8 +13,8 @@ class StoreAPIManager {
     // DOCUMENTATION
     // https://fakestoreapi.com/docs
     
-    func fetchAllProducts(limit: Int = 0, completion: @escaping (Result<[Product],Error>)->()){
-        let url = APIHelper.baseURL + "products" + limitQuery(limit)
+    func fetchAllProducts(completion: @escaping (Result<[Product],Error>)->()){
+        let url = APIHelper.baseURL + "products" // + limitQuery(limit)
         
         NetworkManager.shared.request([Product].self, url: url, method: .get) { result in
             switch result {

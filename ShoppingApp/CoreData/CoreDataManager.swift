@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import CoreData
 
 class CoreDataManager {
     static let shared = CoreDataManager()
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     func saveProductToCart(product: Product, amount: Int) {
         let newProduct = ProductEntity(context: context)
@@ -71,6 +72,17 @@ class CoreDataManager {
             print("Deleted Product")
         }
         catch let error as NSError{
+            print(error)
+        }
+    }
+    
+    func deleteAllProducts() {
+//        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "ProductEntity")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: ProductEntity.fetchRequest())
+
+        do {
+            try context.execute(deleteRequest)
+        } catch let error as NSError {
             print(error)
         }
     }

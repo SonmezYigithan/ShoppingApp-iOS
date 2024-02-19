@@ -25,6 +25,16 @@ class CartVC: UIViewController {
         tableView.register(Cell.self, forCellReuseIdentifier: Cell.identifier)
         return tableView
     }()
+    
+    let checkoutButton: UIButton = {
+        let button = UIButton()
+        button.configuration = .plain()
+        button.backgroundColor = .systemGreen
+        button.tintColor = .white
+        button.layer.cornerRadius = 20
+        button.configuration?.title = "Checkout"
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +53,9 @@ class CartVC: UIViewController {
         title = "My Cart"
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
+        view.addSubview(checkoutButton)
+        
+        checkoutButton.addTarget(self, action: #selector(checkoutButtonClicked), for: .touchUpInside)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -50,11 +63,22 @@ class CartVC: UIViewController {
         applyConstraints()
     }
     
+    @objc private func checkoutButtonClicked() {
+        viewModel.checkout()
+    }
+    
     // MARK: - Constraints
     
     private func applyConstraints() {
         tableView.snp.makeConstraints { make in
             make.edges.equalTo(view)
+        }
+        
+        checkoutButton.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-10)
+            make.leading.equalTo(view.safeAreaLayoutGuide).offset(15)
+            make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-15)
+            make.height.equalTo(60)
         }
     }
 }

@@ -22,7 +22,7 @@ class HomeVM {
 
 extension HomeVM: HomeVMProtocol {
     func fetchBestSellingProducts() {
-        StoreAPIManager.shared.fetchAllProducts(limit: 5) { [weak self] result in
+        StoreAPIManager.shared.fetchAllProducts { [weak self] result in
             switch(result){
             case .success(let products):
                 self?.products.append(contentsOf: products)

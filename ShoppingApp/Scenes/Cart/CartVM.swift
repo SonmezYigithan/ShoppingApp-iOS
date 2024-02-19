@@ -16,6 +16,7 @@ protocol CartVMProtocol: AnyObject {
     func increaseAmount(of product: ProductEntity)
     func decreaseAmount(of product: ProductEntity)
     func deleteProduct(at index: Int)
+    func checkout()
 }
 
 class CartVM {
@@ -58,5 +59,11 @@ extension CartVM: CartVMProtocol {
     func deleteProduct(at index: Int) {
         CoreDataManager.shared.deleteProductFromCart(product: products[index])
         products.remove(at: index)
+    }
+    
+    func checkout() {
+        CoreDataManager.shared.deleteAllProducts()
+        products.removeAll()
+        view?.reloadTableView()
     }
 }

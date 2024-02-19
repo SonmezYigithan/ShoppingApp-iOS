@@ -152,6 +152,8 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollec
             return UICollectionViewCell()
         }
         
+        cell.
+        
         return cell
     }
     
