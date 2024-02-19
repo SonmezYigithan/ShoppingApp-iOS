@@ -58,6 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        print(NSPersistentContainer.defaultDirectoryURL())
         return container
     }()
 

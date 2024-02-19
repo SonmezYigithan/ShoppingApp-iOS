@@ -11,6 +11,8 @@ class ProductDetailsVC: UIViewController {
     
     // MARK: - Properties
     
+    var product: Product?
+    
     let productImage: UIImageView = {
         let image = UIImageView()
         image.contentMode = .scaleAspectFit
@@ -70,6 +72,7 @@ class ProductDetailsVC: UIViewController {
     }
     
     func configure(with product: Product) {
+        self.product = product
         name.text = product.title
         productRatingView.configure(rating: product.rating.rate, ratingCount: product.rating.count)
         price.text = "$" + String(format: "%.2f", product.price)
@@ -93,7 +96,14 @@ class ProductDetailsVC: UIViewController {
         
         stackView.setCustomSpacing(20, after: details)
         
+        addToCartButton.addTarget(self, action: #selector(addToCartButtonClicked), for: .touchUpInside)
+        
         applyConstraints()
+    }
+    
+    @objc private func addToCartButtonClicked() {
+        guard let product = product else { return }
+        CoreDataManager.shared.saveProductToCart(product: product, amount: 1)
     }
     
     // MARK: - Constraints
