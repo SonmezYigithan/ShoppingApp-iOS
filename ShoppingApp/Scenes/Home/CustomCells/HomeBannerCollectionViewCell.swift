@@ -13,7 +13,7 @@ class HomeBannerCollectionViewCell: UICollectionViewCell {
     let imageView: UIImageView = {
         let image = UIImageView()
         image.layer.cornerRadius = 17
-        image.backgroundColor = .yellow
+        image.clipsToBounds = true
         return image
     }()
     
@@ -24,6 +24,10 @@ class HomeBannerCollectionViewCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func configure(imageIndex: Int) {
+        imageView.image = UIImage(named: "Banner\(imageIndex+1)")
     }
     
     private func prepareView() {

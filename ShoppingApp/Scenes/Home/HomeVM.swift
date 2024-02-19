@@ -9,23 +9,23 @@ import Foundation
 
 protocol HomeVMProtocol: AnyObject {
     var view: HomeVC? { get set }
-    var products: [Product] { get }
+    var bestSelling: [Product] { get }
+    var specialOffers: [Product] { get }
     
-    func fetchBestSellingProducts()
+    func viewDidLoad()
     func didSelectProduct(at index: Int)
 }
 
 class HomeVM {
     weak var view: HomeVC?
-    var products = [Product]()
-}
-
-extension HomeVM: HomeVMProtocol {
-    func fetchBestSellingProducts() {
-        StoreAPIManager.shared.fetchAllProducts { [weak self] result in
+    var bestSelling = [Product]()
+    var specialOffers = [Product]()
+    
+    private func fetchBestSellingProducts() {
+        StoreAPIManager.shared.fetchBestSelling(limit: 5) { [weak self] result in
             switch(result){
             case .success(let products):
-                self?.products.append(contentsOf: products)
+                self?.bestSelling.append(contentsOf: products)
                 self?.view?.reloadTableView()
             case .failure(let error):
                 print(error)
@@ -33,9 +33,28 @@ extension HomeVM: HomeVMProtocol {
         }
     }
     
+    private func fetchSpecialOffers() {
+        StoreAPIManager.shared.fetchSpecialOffers(limit: 5) { [weak self] result in
+            switch(result){
+            case .success(let products):
+                self?.specialOffers.append(contentsOf: products)
+                self?.view?.reloadTableView()
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+}
+
+extension HomeVM: HomeVMProtocol {
+    func viewDidLoad() {
+        fetchBestSellingProducts()
+        fetchSpecialOffers()
+    }
+    
     func didSelectProduct(at index: Int) {
         let vc = ProductDetailsVC()
-        vc.configure(with: products[index])
+        vc.configure(with: bestSelling[index])
         view?.navigateToProductDetails(vc: vc)
     }
 }

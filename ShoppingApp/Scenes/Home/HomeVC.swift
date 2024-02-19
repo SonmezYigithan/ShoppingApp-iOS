@@ -59,7 +59,7 @@ class HomeVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.view = self
-        viewModel.fetchBestSellingProducts()
+        viewModel.viewDidLoad()
         prepareView()
     }
     
@@ -130,7 +130,13 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         cell.setViewModel(viewModel: viewModel)
-        cell.configure(with: viewModel.products)
+        
+        if indexPath.section == 0 {
+            cell.configure(with: viewModel.bestSelling)
+        } else {
+            cell.configure(with: viewModel.specialOffers)
+        }
+        
         cell.selectionStyle = .none
         return cell
     }
@@ -144,16 +150,14 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
 
 extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        return 4
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.identifier, for: indexPath) as? BannerCell else {
             return UICollectionViewCell()
         }
-        
-        cell.
-        
+        cell.configure(imageIndex: indexPath.item)
         return cell
     }
     
