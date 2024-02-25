@@ -7,19 +7,16 @@
 
 import UIKit
 
-protocol CategoryProductsVCProtocol: AnyObject {
-    func reloadCollectionView()
-    func navigateToProductDetails(vc: ProductDetailsVC)
-}
-
-final class CategoryProductsVC: UIViewController {
+final class CategoryDetailsVC: UIViewController {
     // MARK: - TypeAlias
     
     typealias Cell = HomeItemCollectionViewCell
     
     // MARK: - Properties
     
-    lazy var viewModel: CategoryProductsVMProtocol = CategoryProductsVM()
+    weak var presenter: CategoryDetailsPresenter?
+    
+    var products = [ProductPresenter]()
     
     let productCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -35,13 +32,8 @@ final class CategoryProductsVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.view = self
+        presenter?.load()
         prepareView()
-    }
-    
-    func configure(with categoryName: String) {
-        title = categoryName
-        viewModel.fetchAllProductsInCategory(category: categoryName)
     }
     
     private func prepareView() {
@@ -64,16 +56,16 @@ final class CategoryProductsVC: UIViewController {
 
 // MARK: - UICollectionViewDelegate
 
-extension CategoryProductsVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension CategoryDetailsVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.products.count
+        return products.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.identifier, for: indexPath) as? Cell else {
             return UICollectionViewCell()
         }
-        cell.configure(with: viewModel.products[indexPath.item])
+//        cell.configure(with: products[indexPath.item]) TODO
         return cell
     }
     
@@ -82,16 +74,18 @@ extension CategoryProductsVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        viewModel.didSelectProduct(at: indexPath.item)
+        presenter?.selectProductItem(at: indexPath.item)
     }
 }
 
-extension CategoryProductsVC: CategoryProductsVCProtocol {
-    func reloadCollectionView() {
-        productCollectionView.reloadData()
-    }
-    
-    func navigateToProductDetails(vc: ProductDetailsVC) {
-        navigationController?.pushViewController(vc, animated: true)
+extension CategoryDetailsVC: CategoryDetailsViewProtocol {
+    func handleOutput(_ output: CategoryDetailsPresenterOutput) {
+        switch output {
+        case .setLoading(let isLoading):
+            print(isLoading)
+        case .showCategoryProducts(let products):
+            self.products = products
+            productCollectionView.reloadData()
+        }
     }
 }

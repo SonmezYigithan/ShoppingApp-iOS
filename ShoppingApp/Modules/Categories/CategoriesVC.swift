@@ -9,7 +9,7 @@ import UIKit
 
 protocol CategoriesVCProtocol: AnyObject {
     func reloadCollectionView()
-    func navigateToCategoryProducts(with categoryProductsVC: CategoryProductsVC)
+    func navigateToCategoryProducts(with categoryProductsVC: CategoryDetailsVC)
 }
 
 class CategoriesVC: UIViewController {
@@ -19,7 +19,9 @@ class CategoriesVC: UIViewController {
     
     // MARK: - Properties
     
-    private lazy var viewModel: CategoriesVMProtocol = CategoriesVM()
+    var presenter: CategoriesPresenterProtocol?
+    
+    private var categories = [CategoryPresentation]()
     
     let categoryCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -28,11 +30,16 @@ class CategoriesVC: UIViewController {
         collectionView.register(Cell.self, forCellWithReuseIdentifier: Cell.identifier)
         return collectionView
     }()
+    
+    private let activityIndicator: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView()
+        spinner.tintColor = .label
+        return spinner
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.view = self
-        viewModel.fetchAllCategories()
+        presenter?.load()
         prepareView()
     }
     
@@ -40,6 +47,7 @@ class CategoriesVC: UIViewController {
         title = "Categories"
         
         view.addSubview(categoryCollectionView)
+        view.addSubview(activityIndicator)
         
         categoryCollectionView.delegate = self
         categoryCollectionView.dataSource = self
@@ -51,19 +59,23 @@ class CategoriesVC: UIViewController {
         categoryCollectionView.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
         }
+        
+        activityIndicator.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
 
 extension CategoriesVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return viewModel.categories.count
+        return categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.identifier, for: indexPath) as? Cell else {
             return UICollectionViewCell()
         }
-        cell.configure(with: viewModel.categories[indexPath.item])
+        cell.configure(with: categories[indexPath.item].name)
         return cell
     }
     
@@ -72,16 +84,22 @@ extension CategoriesVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        viewModel.didSelectCategoryItemAt(indexPath.item)
+        presenter?.selectCategoryItem(at: indexPath.item)
     }
 }
 
-extension CategoriesVC: CategoriesVCProtocol {
-    func reloadCollectionView() {
-        categoryCollectionView.reloadData()
-    }
-    
-    func navigateToCategoryProducts(with categoryProductsVC: CategoryProductsVC) {
-        navigationController?.pushViewController(categoryProductsVC, animated: true)
+extension CategoriesVC: CategoriesViewProtocol {
+    func handleOutput(_ output: CategoriesPresenterOutput) {
+        switch output {
+        case .setLoading(let isLoading):
+            if isLoading {
+                activityIndicator.startAnimating()
+            }else {
+                activityIndicator.stopAnimating()
+            }
+        case .showCategoryList(let categories):
+            self.categories = categories
+            categoryCollectionView.reloadData()
+        }
     }
 }

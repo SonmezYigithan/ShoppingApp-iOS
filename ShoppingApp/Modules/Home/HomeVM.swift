@@ -22,7 +22,7 @@ class HomeVM {
     var specialOffers = [Product]()
     
     private func fetchBestSellingProducts() {
-        StoreAPIManager.shared.fetchBestSelling(limit: 5) { [weak self] result in
+        StoreService.shared.fetchBestSelling(limit: 5) { [weak self] result in
             switch(result){
             case .success(let products):
                 self?.bestSelling.append(contentsOf: products)
@@ -34,7 +34,7 @@ class HomeVM {
     }
     
     private func fetchSpecialOffers() {
-        StoreAPIManager.shared.fetchSpecialOffers(limit: 5) { [weak self] result in
+        StoreService.shared.fetchSpecialOffers(limit: 5) { [weak self] result in
             switch(result){
             case .success(let products):
                 self?.specialOffers.append(contentsOf: products)

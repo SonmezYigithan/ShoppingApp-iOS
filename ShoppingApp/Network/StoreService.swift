@@ -7,13 +7,19 @@
 
 import Foundation
 
-class StoreAPIManager {
-    static let shared = StoreAPIManager()
+protocol StoreServiceDelegate: AnyObject {
+    func fetchBestSelling(limit: Int, completion: @escaping (Result<[Product],Error>)->())
+    func fetchAllCategories(completion: @escaping (Result<[String],Error>)->())
+    func fetchAllProductsInCategory(categoryName: String, completion: @escaping (Result<[Product],Error>)->())
+}
+
+class StoreService: StoreServiceDelegate {
+    static let shared = StoreService()
     
     // DOCUMENTATION
     // https://fakestoreapi.com/docs
     
-    func fetchBestSelling(limit: Int = 0, completion: @escaping (Result<[Product],Error>)->()){
+    func fetchBestSelling(limit: Int = 0, completion: @escaping (Result<[Product],Error>)->()) {
         let url = APIHelper.baseURL + "products" + limitQuery(limit)
         
         NetworkManager.shared.request([Product].self, url: url, method: .get) { result in
@@ -26,7 +32,7 @@ class StoreAPIManager {
         }
     }
     
-    func fetchSpecialOffers(limit: Int = 0, completion: @escaping (Result<[Product],Error>)->()){
+    func fetchSpecialOffers(limit: Int = 0, completion: @escaping (Result<[Product],Error>)->()) {
         let url = APIHelper.baseURL + "products/category/electronics" + limitQuery(limit)
         
         NetworkManager.shared.request([Product].self, url: url, method: .get) { result in
@@ -39,7 +45,7 @@ class StoreAPIManager {
         }
     }
     
-    func fetchAllCategories(completion: @escaping (Result<[String],Error>)->()){
+    func fetchAllCategories(completion: @escaping (Result<[String],Error>)->()) {
         let url = APIHelper.baseURL + "products/categories"
         
         // unfortunately fakeStoreApi doesn't provide any images for categories. and just gives names
