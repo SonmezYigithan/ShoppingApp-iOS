@@ -34,6 +34,7 @@ class CategoriesVC: UIViewController {
     private let activityIndicator: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView()
         spinner.tintColor = .label
+        spinner.style = .large
         return spinner
     }()
 

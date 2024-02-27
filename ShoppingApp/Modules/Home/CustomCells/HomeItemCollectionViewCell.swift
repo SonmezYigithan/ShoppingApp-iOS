@@ -52,11 +52,11 @@ class HomeItemCollectionViewCell: UICollectionViewCell {
         applyConstraints()
     }
     
-    func configure(with product: Product) {
-        nameLabel.text = product.title
+    func configure(with product: ProductItemPresentation) {
+        nameLabel.text = product.name
         priceLabel.text = "$" + String(format: "%.2f", product.price)
         
-        if let imageURL = URL(string: product.image) {
+        if let imageURL = URL(string: product.imageURL) {
             productImage.kf.setImage(with: imageURL)
         }
     }

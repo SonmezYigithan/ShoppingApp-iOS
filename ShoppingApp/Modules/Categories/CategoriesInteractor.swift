@@ -9,9 +9,7 @@ import Foundation
 
 class CategoriesInteractor: CategoriesInteractorProtocol {
     weak var delegate: CategoriesInteractorDelegate?
-    
     private let service: StoreServiceDelegate
-    
     private var categories = [Category]()
     
     init(service: StoreServiceDelegate) {

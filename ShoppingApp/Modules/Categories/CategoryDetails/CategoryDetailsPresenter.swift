@@ -38,9 +38,9 @@ extension CategoryDetailsPresenter: CategoryDetailsInteractorDelegate {
         case .setLoading(let isLoading):
             view.handleOutput(.setLoading(isLoading))
         case .showCategoryProducts(let products):
-            let productPresenter = products.map { ProductPresenter(productName: $0.title,
-                                                                   productImageURL: $0.image,
-                                                                   productPrice: String($0.price))}
+            let productPresenter = products.map { ProductItemPresentation(name: $0.title,
+                                                                   imageURL: $0.image,
+                                                                   price: $0.price)}
             view.handleOutput(.showCategoryProducts(productPresenter))
         case .showProductDetails(let product):
             router.navigate(to: .productDetail(product))

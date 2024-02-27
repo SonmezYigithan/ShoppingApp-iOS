@@ -18,7 +18,7 @@ class HomeProductTableViewCell: UITableViewCell {
     
     weak var viewModel: HomeVMProtocol?
     
-    var products = [Product]()
+    var products = [ProductItemPresentation]()
     
     let productCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -56,7 +56,7 @@ class HomeProductTableViewCell: UITableViewCell {
     }
     
     func configure(with products: [Product]) {
-        self.products = products
+//        self.products = products
         productCollectionView.reloadData()
     }
     

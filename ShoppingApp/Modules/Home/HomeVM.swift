@@ -54,7 +54,7 @@ extension HomeVM: HomeVMProtocol {
     
     func didSelectProduct(at index: Int) {
         let vc = ProductDetailsVC()
-        vc.configure(with: bestSelling[index])
+//        vc.configure(with: bestSelling[index]) TODO
         view?.navigateToProductDetails(vc: vc)
     }
 }

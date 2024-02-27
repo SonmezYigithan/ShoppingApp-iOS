@@ -9,9 +9,9 @@ import UIKit
 
 class ProductDetailsVC: UIViewController {
     
-    // MARK: - Properties
+    var presenter: ProductDetailsPresenterProtocol?
     
-    var product: Product?
+    // MARK: - Properties
     
     let productImage: UIImageView = {
         let image = UIImageView()
@@ -55,7 +55,7 @@ class ProductDetailsVC: UIViewController {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.spacing = 10
-//        stack.distribution = .equalSpacing
+        //        stack.distribution = .equalSpacing
         return stack
     }()
     
@@ -65,22 +65,11 @@ class ProductDetailsVC: UIViewController {
     }()
     
     // MARK: - LifeCycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        presenter?.load()
         prepareView()
-    }
-    
-    func configure(with product: Product) {
-        self.product = product
-        name.text = product.title
-        productRatingView.configure(rating: product.rating.rate, ratingCount: product.rating.count)
-        price.text = "$" + String(format: "%.2f", product.price)
-        details.text = product.description
-        
-        if let url = URL(string: product.image) {
-            productImage.kf.setImage(with: url)
-        }
     }
     
     private func prepareView() {
@@ -102,8 +91,7 @@ class ProductDetailsVC: UIViewController {
     }
     
     @objc private func addToCartButtonClicked() {
-        guard let product = product else { return }
-        CoreDataManager.shared.saveProductToCart(product: product, amount: 1)
+        presenter?.addToCartButtonClicked()
     }
     
     // MARK: - Constraints
@@ -126,6 +114,26 @@ class ProductDetailsVC: UIViewController {
         
         addToCartButton.snp.makeConstraints { make in
             make.height.equalTo(60)
+        }
+    }
+}
+
+extension ProductDetailsVC: ProductDetailsViewProtocol {
+    func handleOutput(_ output: ProductDetailsPresenterOutput) {
+        switch output {
+        case .setLoading(let isLoading):
+            print(isLoading) // TODO
+        case .showAddToCartSuccess:
+            print("go to Shopping Cart")// TODO
+        case .showProductDetails(let product):
+            name.text = product.name
+            productRatingView.configure(rating: product.rate, ratingCount: product.ratingCount)
+            price.text = "$" + String(format: "%.2f", product.price)
+            details.text = product.description
+            
+            if let url = URL(string: product.image) {
+                productImage.kf.setImage(with: url)
+            }
         }
     }
 }

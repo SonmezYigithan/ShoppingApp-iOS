@@ -14,9 +14,9 @@ final class CategoryDetailsVC: UIViewController {
     
     // MARK: - Properties
     
-    weak var presenter: CategoryDetailsPresenter?
+    var presenter: CategoryDetailsPresenter?
     
-    var products = [ProductPresenter]()
+    var products = [ProductItemPresentation]()
     
     let productCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -26,6 +26,13 @@ final class CategoryDetailsVC: UIViewController {
         collectionView.register(Cell.self, forCellWithReuseIdentifier: Cell.identifier)
         collectionView.showsHorizontalScrollIndicator = false
         return collectionView
+    }()
+    
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView()
+        spinner.tintColor = .label
+        spinner.style = .large
+        return spinner
     }()
     
     // MARK: - Life Cycle
@@ -38,6 +45,7 @@ final class CategoryDetailsVC: UIViewController {
     
     private func prepareView() {
         view.addSubview(productCollectionView)
+        view.addSubview(spinner)
         
         productCollectionView.dataSource = self
         productCollectionView.delegate = self
@@ -49,6 +57,10 @@ final class CategoryDetailsVC: UIViewController {
     
     private func applyConstraints() {
         productCollectionView.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        spinner.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
         }
     }
@@ -65,7 +77,7 @@ extension CategoryDetailsVC: UICollectionViewDelegate, UICollectionViewDataSourc
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Cell.identifier, for: indexPath) as? Cell else {
             return UICollectionViewCell()
         }
-//        cell.configure(with: products[indexPath.item]) TODO
+        cell.configure(with: products[indexPath.item])
         return cell
     }
     
@@ -82,7 +94,11 @@ extension CategoryDetailsVC: CategoryDetailsViewProtocol {
     func handleOutput(_ output: CategoryDetailsPresenterOutput) {
         switch output {
         case .setLoading(let isLoading):
-            print(isLoading)
+            if isLoading {
+                spinner.startAnimating()
+            }else {
+                spinner.stopAnimating()
+            }
         case .showCategoryProducts(let products):
             self.products = products
             productCollectionView.reloadData()

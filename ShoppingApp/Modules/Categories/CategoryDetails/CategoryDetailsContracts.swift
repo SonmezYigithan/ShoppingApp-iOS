@@ -40,7 +40,7 @@ protocol CategoryDetailsPresenterProtocol: AnyObject {
 
 enum CategoryDetailsPresenterOutput {
     case setLoading(Bool)
-    case showCategoryProducts([ProductPresenter])
+    case showCategoryProducts([ProductItemPresentation])
 }
 
 // MARK: - Router

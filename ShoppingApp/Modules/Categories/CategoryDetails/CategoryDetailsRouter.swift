@@ -20,7 +20,7 @@ extension CategoryDetailsRouter: CategoryDetailsRouterProtocol {
     func navigate(to route: CategoryProductRoute) {
         switch route {
         case .productDetail(let product):
-            let productDetailsVC = ProductDetailsVC()
+            let productDetailsVC = ProductDetailsBuilder.make(product: product)
             view?.show(productDetailsVC, sender: self)
         }
     }

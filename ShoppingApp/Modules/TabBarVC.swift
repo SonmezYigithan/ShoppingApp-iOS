@@ -7,6 +7,12 @@
 
 import UIKit
 
+enum TabBarPages: String {
+    case homeVC = "HomeVC"
+    case categoriesVC = "CategoriesVC"
+    case cartVC = "CartVC"
+}
+
 class TabBarVC: UITabBarController {
     override func viewDidLoad() {
         view.backgroundColor = .systemBackground
@@ -24,6 +30,11 @@ class TabBarVC: UITabBarController {
         homeVC.title = "Home"
         CategoriesVC.title = "Categories"
         CartVC.title = "Cart"
+        
+        // set RestorationIdentifier to programmatically switch tab bar tabs
+        homeVC.restorationIdentifier = TabBarPages.homeVC.rawValue
+        CategoriesVC.restorationIdentifier = TabBarPages.categoriesVC.rawValue
+        CartVC.restorationIdentifier = TabBarPages.cartVC.rawValue
         
         tabBar.tintColor = .label
         

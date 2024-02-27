@@ -8,7 +8,6 @@
 import Foundation
 
 class CategoriesBuilder {
-    
     static func make() -> CategoriesVC {
         let view = CategoriesVC()
         let router = CategoriesRouter(view: view)
