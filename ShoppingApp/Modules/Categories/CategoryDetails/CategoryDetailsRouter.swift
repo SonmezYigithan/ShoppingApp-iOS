@@ -17,7 +17,7 @@ class CategoryDetailsRouter {
 }
 
 extension CategoryDetailsRouter: CategoryDetailsRouterProtocol {
-    func navigate(to route: CategoryProductRoute) {
+    func navigate(to route: CategoryDetailsRoute) {
         switch route {
         case .productDetail(let product):
             let productDetailsVC = ProductDetailsBuilder.make(product: product)

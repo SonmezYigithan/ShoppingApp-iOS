@@ -24,7 +24,6 @@ protocol ProductDetailsPresenterProtocol: AnyObject {
 enum ProductDetailsPresenterOutput {
     case setLoading(Bool)
     case showProductDetails(ProductDetailsPresentation)
-    case showAddToCartSuccess
 }
 
 // MARK: - Interactor

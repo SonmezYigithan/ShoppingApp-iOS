@@ -64,6 +64,13 @@ class ProductDetailsVC: UIViewController {
         return scroll
     }()
     
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView()
+        spinner.tintColor = .label
+        spinner.style = .large
+        return spinner
+    }()
+    
     // MARK: - LifeCycle
     
     override func viewDidLoad() {
@@ -82,6 +89,7 @@ class ProductDetailsVC: UIViewController {
         stackView.addArrangedSubview(price)
         stackView.addArrangedSubview(details)
         stackView.addArrangedSubview(addToCartButton)
+        view.addSubview(spinner)
         
         stackView.setCustomSpacing(20, after: details)
         
@@ -115,6 +123,10 @@ class ProductDetailsVC: UIViewController {
         addToCartButton.snp.makeConstraints { make in
             make.height.equalTo(60)
         }
+        
+        spinner.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
 
@@ -122,9 +134,11 @@ extension ProductDetailsVC: ProductDetailsViewProtocol {
     func handleOutput(_ output: ProductDetailsPresenterOutput) {
         switch output {
         case .setLoading(let isLoading):
-            print(isLoading) // TODO
-        case .showAddToCartSuccess:
-            print("go to Shopping Cart")// TODO
+            if isLoading {
+                spinner.startAnimating()
+            }else {
+                spinner.stopAnimating()
+            }
         case .showProductDetails(let product):
             name.text = product.name
             productRatingView.configure(rating: product.rate, ratingCount: product.ratingCount)

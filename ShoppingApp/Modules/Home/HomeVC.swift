@@ -8,6 +8,19 @@
 import UIKit
 import SnapKit
 
+enum HomeSections: Int, CustomStringConvertible, CaseIterable {
+    case bestSelling
+    case specialOffers
+    
+    var description: String {
+        switch self.rawValue {
+        case 0: return "Best Selling"
+        case 1: return "SpecialOffers"
+        default: return ""
+        }
+    }
+}
+
 protocol HomeVCProtocol {
     func reloadTableView()
     func navigateToProductDetails(vc: ProductDetailsVC)
@@ -20,9 +33,13 @@ class HomeVC: UIViewController {
     typealias ProductCell = HomeProductTableViewCell
     
     // MARK: - Properties
-    private lazy var viewModel: HomeVMProtocol = HomeVM()
+    
+    var presenter: HomePresenterProtocol?
     
     let sectionNames = ["Best Selling", "Special Offer"]
+    
+    var bestSellingProducts = [ProductItemPresentation]()
+    var specialOfferProducts = [ProductItemPresentation]()
     
     let scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -54,12 +71,18 @@ class HomeVC: UIViewController {
         return tableView
     }()
     
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView()
+        spinner.tintColor = .label
+        spinner.style = .large
+        return spinner
+    }()
+    
     // MARK: - Life Cycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.view = self
-        viewModel.viewDidLoad()
+        presenter?.load()
         prepareView()
     }
     
@@ -69,6 +92,7 @@ class HomeVC: UIViewController {
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(bannerCollectionView)
         stackView.addArrangedSubview(tableView)
+        view.addSubview(spinner)
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -107,6 +131,10 @@ class HomeVC: UIViewController {
             make.height.equalTo(0)
             make.width.equalToSuperview()
         }
+        
+        spinner.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
 
@@ -118,23 +146,26 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sectionNames.count
+        return HomeSections.allCases.count
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionNames[section]
+        if section == HomeSections.bestSelling.rawValue {
+            return HomeSections.bestSelling.description
+        }else {
+            return HomeSections.specialOffers.description
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: ProductCell.identifier, for: indexPath) as? ProductCell else {
             return UITableViewCell()
         }
-        cell.setViewModel(viewModel: viewModel)
         
         if indexPath.section == 0 {
-            cell.configure(with: viewModel.bestSelling)
+            cell.configure(with: bestSellingProducts, presenter: presenter!, sectionIndex: indexPath.section)
         } else {
-            cell.configure(with: viewModel.specialOffers)
+            cell.configure(with: specialOfferProducts, presenter: presenter!, sectionIndex: indexPath.section)
         }
         
         cell.selectionStyle = .none
@@ -146,7 +177,7 @@ extension HomeVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegate
+// MARK: - BannerCollectionView
 
 extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -166,12 +197,21 @@ extension HomeVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollec
     }
 }
 
-extension HomeVC: HomeVCProtocol {
-    func reloadTableView() {
-        tableView.reloadData()
-    }
-    
-    func navigateToProductDetails(vc: ProductDetailsVC) {
-        navigationController?.pushViewController(vc, animated: true)
+extension HomeVC: HomeViewProtocol {
+    func handleOutput(_ output: HomePresenterOutput) {
+        switch output {
+        case .setLoading(let isLoading):
+            if isLoading {
+                spinner.startAnimating()
+            }else {
+                spinner.stopAnimating()
+            }
+        case .showBestSelling(let products):
+            bestSellingProducts = products
+            tableView.reloadData()
+        case .showSpecialOffers(let products):
+            specialOfferProducts = products
+            tableView.reloadData()
+        }
     }
 }

@@ -46,9 +46,9 @@ enum CategoryDetailsPresenterOutput {
 // MARK: - Router
 
 protocol CategoryDetailsRouterProtocol: AnyObject {
-    func navigate(to route: CategoryProductRoute)
+    func navigate(to route: CategoryDetailsRoute)
 }
 
-enum CategoryProductRoute {
+enum CategoryDetailsRoute {
     case productDetail(Product)
 }

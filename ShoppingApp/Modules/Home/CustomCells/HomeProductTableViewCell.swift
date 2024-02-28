@@ -16,9 +16,12 @@ class HomeProductTableViewCell: UITableViewCell {
     
     static let identifier = "HomeProductTableViewCell"
     
-    weak var viewModel: HomeVMProtocol?
+//    weak var viewModel: HomeVMProtocol?
+    weak var presenter: HomePresenterProtocol?
     
     var products = [ProductItemPresentation]()
+    
+    var sectionIndex = 0
     
     let productCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -51,12 +54,10 @@ class HomeProductTableViewCell: UITableViewCell {
         applyConstraints()
     }
     
-    func setViewModel(viewModel: HomeVMProtocol) {
-        self.viewModel = viewModel
-    }
-    
-    func configure(with products: [Product]) {
-//        self.products = products
+    func configure(with products: [ProductItemPresentation], presenter: HomePresenterProtocol, sectionIndex: Int) {
+        self.products = products
+        self.presenter = presenter
+        self.sectionIndex = sectionIndex
         productCollectionView.reloadData()
     }
     
@@ -89,7 +90,7 @@ extension HomeProductTableViewCell: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        viewModel?.didSelectProduct(at: indexPath.item)
+        presenter?.selectProductItem(from: sectionIndex, at: indexPath.item)
     }
     
 }

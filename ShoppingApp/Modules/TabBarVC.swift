@@ -17,7 +17,7 @@ class TabBarVC: UITabBarController {
     override func viewDidLoad() {
         view.backgroundColor = .systemBackground
         
-        let homeVC = UINavigationController(rootViewController: HomeVC())
+        let homeVC = UINavigationController(rootViewController: HomeBuilder.make())
         let CategoriesVC = UINavigationController(rootViewController: CategoriesBuilder.make())
         let CartVC = UINavigationController(rootViewController: CartVC())
         

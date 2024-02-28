@@ -24,7 +24,6 @@ extension ProductDetailsInteractor: ProductDetailsInteractorProtocol {
     }
     
     func addToCart() {
-        // save to core Data
         CoreDataManager.shared.saveProductToCart(product: product, amount: 1)
         delegate?.handleOutput(.showAddToCartSuccess)
     }
