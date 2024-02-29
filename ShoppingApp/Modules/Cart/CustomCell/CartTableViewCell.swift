@@ -95,10 +95,6 @@ class CartTableViewCell: UITableViewCell {
         }
     }
     
-    func updateAmount(amount: Int) {
-        amountLabel.text = String(amount)
-    }
-    
     private func prepareView() {
         addSubview(productImage)
         addSubview(productName)

@@ -59,8 +59,6 @@ extension CartPresenter: CartInteractorDelegate {
                                                                                      image: $0.image ?? "",
                                                                                      amount: Int($0.amount)) }
             view.handleOutput(.showProducts(productPresentations))
-        case .updateAmount(let amount):
-            view.handleOutput(.updateAmount(amount))
         case .showCartEmpty:
             view.handleOutput(.showEmptyCartView)
         }

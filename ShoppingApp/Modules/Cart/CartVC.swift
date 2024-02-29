@@ -132,6 +132,7 @@ extension CartVC: UITableViewDelegate, UITableViewDataSource {
             self.presenter?.deleteProduct(at: indexPath.row)
             self.products.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            self.updateProductSubtotal()
         }
         
         let swipeActions = UISwipeActionsConfiguration(actions: [delete])
@@ -146,8 +147,6 @@ extension CartVC: CartViewProtocol {
             setLoading(isLoading: isLoading)
         case .showProducts(let products):
             showProducts(products: products)
-        case .updateAmount((let index, let amount)):
-            updateAmount(index: index, amount: amount)
         case .showCheckoutSuccess:
             showCheckoutSuccess()
         case .showEmptyCartView:
@@ -169,17 +168,15 @@ extension CartVC: CartViewProtocol {
         tableView.reloadData()
         
         checkoutButton.isHidden = false
-        subTotal = 0.0
-        for product in products {
-            subTotal += product.price
-        }
-        checkoutButton.setPriceValue("$" + String(subTotal))
+        updateProductSubtotal()
     }
     
-    private func updateAmount(index: Int, amount: Int) {
-        let indexPath = IndexPath(row: index, section: 0)
-        guard let cell = tableView.cellForRow(at: indexPath) as? Cell else { return }
-        cell.updateAmount(amount: amount)
+    private func updateProductSubtotal() {
+        subTotal = 0.0
+        for product in products {
+            subTotal += product.price * Double(product.amount)
+        }
+        checkoutButton.setPriceValue("$" + String(format: "%.2f",subTotal))
     }
     
     private func showCheckoutSuccess() {

@@ -41,21 +41,22 @@ extension CartInteractor: CartInteractorProtocol {
     }
     
     func increaseAmount(at index: Int) {
-        let amount = Int(productEntities[index].amount)
         CoreDataManager.shared.increaseProductAmount(product: productEntities[index])
-        delegate?.handleOutput(.updateAmount((index, amount + 1)))
+        delegate?.handleOutput(.showProducts(productEntities))
     }
     
     func decreaseAmount(at index: Int) {
-        let amount = Int(productEntities[index].amount)
-        if amount > 1 {
+        if productEntities[index].amount > 1 {
             CoreDataManager.shared.decreaseProductAmount(product: productEntities[index])
-            delegate?.handleOutput(.updateAmount((index, amount - 1)))
+            delegate?.handleOutput(.showProducts(productEntities))
         }
     }
     
     func deleteProduct(at index: Int) {
         CoreDataManager.shared.deleteProductFromCart(product: productEntities[index])
         productEntities.remove(at: index)
+        if productEntities.count == 0 {
+            delegate?.handleOutput(.showCartEmpty)            
+        }
     }
 }

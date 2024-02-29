@@ -26,7 +26,6 @@ enum CartPresenterOutput {
     case setLoading(Bool)
     case showProducts([ProductCartPresentation])
     case showCheckoutSuccess
-    case updateAmount((Int,Int))
     case showEmptyCartView
 }
 
@@ -49,8 +48,6 @@ enum CartInteractorOutput {
     case setLoading(Bool)
     case showCheckoutSuccess
     case showProducts([ProductEntity])
-    /// (index, amount)
-    case updateAmount((Int,Int))
     case showCartEmpty
 }
 
