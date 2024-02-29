@@ -15,10 +15,11 @@ protocol CartViewProtocol: AnyObject {
 
 protocol CartPresenterProtocol: AnyObject {
     func load()
-    func checkout()
+    func checkout(subtotal: Double)
     func increaseAmount(at index: Int)
     func decreaseAmount(at index: Int)
     func deleteProduct(at index: Int)
+    func buy()
 }
 
 enum CartPresenterOutput {
@@ -54,3 +55,12 @@ enum CartInteractorOutput {
 }
 
 // MARK: - Router
+
+protocol CartRouterProtocol: AnyObject {
+    func navigate(to route: CartRoute)
+}
+
+enum CartRoute {
+    /// Subtotal
+    case checkout(Double,CartPresenterProtocol)
+}

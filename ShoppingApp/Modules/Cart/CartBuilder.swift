@@ -11,7 +11,8 @@ class CartBuilder {
     static func make() -> CartVC {
         let view = CartVC()
         let interactor = CartInteractor(service: app.service)
-        let presenter = CartPresenter(view: view, interactor: interactor)
+        let router = CartRouter(view: view)
+        let presenter = CartPresenter(view: view, interactor: interactor, router: router)
         view.presenter = presenter
         return view
     }

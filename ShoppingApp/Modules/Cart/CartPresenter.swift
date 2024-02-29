@@ -10,10 +10,12 @@ import Foundation
 class CartPresenter {
     private unowned let view: CartViewProtocol
     private var interactor: CartInteractorProtocol
+    private var router: CartRouterProtocol
     
-    init(view: CartViewProtocol, interactor: CartInteractorProtocol) {
+    init(view: CartViewProtocol, interactor: CartInteractorProtocol, router: CartRouterProtocol) {
         self.view = view
         self.interactor = interactor
+        self.router = router
         self.interactor.delegate = self
     }
 }
@@ -23,7 +25,11 @@ extension CartPresenter: CartPresenterProtocol {
         interactor.load()
     }
     
-    func checkout() {
+    func checkout(subtotal: Double) {
+        router.navigate(to: .checkout(subtotal,self))
+    }
+    
+    func buy() {
         interactor.checkout()
     }
     

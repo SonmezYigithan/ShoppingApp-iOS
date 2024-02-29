@@ -21,6 +21,7 @@ class CartVC: UIViewController {
     var presenter: CartPresenterProtocol?
     
     var products = [ProductCartPresentation]()
+    var subTotal = 0.0
     
     let tableView: UITableView = {
         let tableView = UITableView()
@@ -28,13 +29,14 @@ class CartVC: UIViewController {
         return tableView
     }()
     
-    let checkoutButton: UIButton = {
-        let button = UIButton()
+    let checkoutButton: CheckoutButton = {
+        let button = CheckoutButton()
         button.configuration = .plain()
-        button.backgroundColor = .systemGreen
+        button.backgroundColor = UIColor(hex: "#599165")
         button.tintColor = .white
         button.layer.cornerRadius = 20
         button.configuration?.title = "Checkout"
+        button.priceLabel.text = "$0.00"
         return button
     }()
     
@@ -80,7 +82,7 @@ class CartVC: UIViewController {
     }
     
     @objc private func checkoutButtonClicked() {
-        presenter?.checkout()
+        presenter?.checkout(subtotal: subTotal)
     }
     
     // MARK: - Constraints
@@ -162,10 +164,16 @@ extension CartVC: CartViewProtocol {
     }
     
     private func showProducts(products: ([ProductCartPresentation])) {
-        checkoutButton.isHidden = false
         cartEmptyView.isHidden = true
         self.products = products
         tableView.reloadData()
+        
+        checkoutButton.isHidden = false
+        subTotal = 0.0
+        for product in products {
+            subTotal += product.price
+        }
+        checkoutButton.setPriceValue("$" + String(subTotal))
     }
     
     private func updateAmount(index: Int, amount: Int) {
