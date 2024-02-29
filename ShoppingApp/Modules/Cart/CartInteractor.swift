@@ -20,7 +20,11 @@ class CartInteractor {
     func fetchProductsInCart() {
         if let products = CoreDataManager.shared.getProductsInCart() {
             self.productEntities = products
-            delegate?.handleOutput(.showProducts(products))
+            if products.count > 0 {
+                delegate?.handleOutput(.showProducts(products))
+            }else {
+                delegate?.handleOutput(.showCartEmpty)
+            }
         }
     }
 }

@@ -26,6 +26,7 @@ enum CartPresenterOutput {
     case showProducts([ProductCartPresentation])
     case showCheckoutSuccess
     case updateAmount((Int,Int))
+    case showEmptyCartView
 }
 
 // MARK: - Interactor
@@ -49,6 +50,7 @@ enum CartInteractorOutput {
     case showProducts([ProductEntity])
     /// (index, amount)
     case updateAmount((Int,Int))
+    case showCartEmpty
 }
 
 // MARK: - Router

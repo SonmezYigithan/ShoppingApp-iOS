@@ -55,6 +55,12 @@ class CartVC: UIViewController {
         presenter?.load()
     }
     
+    let cartEmptyView: CartEmptyView = {
+        let view = CartEmptyView()
+        view.isHidden = true
+        return view
+    }()
+    
     // MARK: - LifeCycle
     
     private func prepareView() {
@@ -63,6 +69,7 @@ class CartVC: UIViewController {
         view.addSubview(tableView)
         view.addSubview(checkoutButton)
         view.addSubview(spinner)
+        view.addSubview(cartEmptyView)
         
         checkoutButton.addTarget(self, action: #selector(checkoutButtonClicked), for: .touchUpInside)
         
@@ -92,6 +99,10 @@ class CartVC: UIViewController {
         
         spinner.snp.makeConstraints { make in
             make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        cartEmptyView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
 }
@@ -130,22 +141,52 @@ extension CartVC: CartViewProtocol {
     func handleOutput(_ output: CartPresenterOutput) {
         switch output {
         case .setLoading(let isLoading):
-            if isLoading {
-                spinner.startAnimating()
-            }else {
-                spinner.stopAnimating()
-            }
+            setLoading(isLoading: isLoading)
         case .showProducts(let products):
-            self.products = products
-            tableView.reloadData()
+            showProducts(products: products)
         case .updateAmount((let index, let amount)):
-            let indexPath = IndexPath(row: index, section: 0)
-            guard let cell = tableView.cellForRow(at: indexPath) as? Cell else { return }
-            cell.updateAmount(amount: amount)
+            updateAmount(index: index, amount: amount)
         case .showCheckoutSuccess:
-            let indexPaths = products.indices.map { IndexPath(row: $0, section: 0) }
-            products.removeAll()
-            self.tableView.deleteRows(at: indexPaths, with: .automatic)
+            showCheckoutSuccess()
+        case .showEmptyCartView:
+            showEmptyCartView()
         }
+    }
+    
+    private func setLoading(isLoading: Bool) {
+        if isLoading {
+            spinner.startAnimating()
+        }else {
+            spinner.stopAnimating()
+        }
+    }
+    
+    private func showProducts(products: ([ProductCartPresentation])) {
+        checkoutButton.isHidden = false
+        cartEmptyView.isHidden = true
+        self.products = products
+        tableView.reloadData()
+    }
+    
+    private func updateAmount(index: Int, amount: Int) {
+        let indexPath = IndexPath(row: index, section: 0)
+        guard let cell = tableView.cellForRow(at: indexPath) as? Cell else { return }
+        cell.updateAmount(amount: amount)
+    }
+    
+    private func showCheckoutSuccess() {
+        let indexPaths = products.indices.map { IndexPath(row: $0, section: 0) }
+        products.removeAll()
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            self.showEmptyCartView()
+        }
+        self.tableView.deleteRows(at: indexPaths, with: .automatic)
+        CATransaction.commit()
+    }
+    
+    private func showEmptyCartView() {
+        checkoutButton.isHidden = true
+        cartEmptyView.isHidden = false
     }
 }

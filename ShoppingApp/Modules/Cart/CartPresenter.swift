@@ -55,6 +55,8 @@ extension CartPresenter: CartInteractorDelegate {
             view.handleOutput(.showProducts(productPresentations))
         case .updateAmount(let amount):
             view.handleOutput(.updateAmount(amount))
+        case .showCartEmpty:
+            view.handleOutput(.showEmptyCartView)
         }
     }
 }
