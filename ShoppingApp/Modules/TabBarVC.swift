@@ -19,7 +19,7 @@ class TabBarVC: UITabBarController {
         
         let homeVC = UINavigationController(rootViewController: HomeBuilder.make())
         let CategoriesVC = UINavigationController(rootViewController: CategoriesBuilder.make())
-        let CartVC = UINavigationController(rootViewController: CartVC())
+        let CartVC = UINavigationController(rootViewController: CartBuilder.make())
         
         homeVC.tabBarItem.selectedImage = UIImage(systemName: "house.fill")
         homeVC.tabBarItem.image = UIImage(systemName: "house")

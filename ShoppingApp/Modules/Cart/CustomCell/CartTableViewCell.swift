@@ -12,9 +12,9 @@ class CartTableViewCell: UITableViewCell {
 
     static let identifier = "CartTableViewCell"
     
-    weak var viewModel: CartVMProtocol?
+    weak var presenter: CartPresenterProtocol?
     
-    var product: ProductEntity?
+    var index: Int?
     
     let productImage: UIImageView = {
         let image = UIImageView()
@@ -82,17 +82,21 @@ class CartTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(with product: ProductEntity, viewModel: CartVMProtocol) {
-        self.product = product
-        self.viewModel = viewModel
+    func configure(with product: ProductCartPresentation, presenter: CartPresenterProtocol?, index: Int) {
+        self.presenter = presenter
+        self.index = index
         
         productName.text = product.name
         amountLabel.text = String(product.amount)
         price.text = "$" + String(format: "%.2f", product.price * Double(product.amount))
         
-        if let url = URL(string: product.image ?? "") {
+        if let url = URL(string: product.image) {
             productImage.kf.setImage(with: url)
         }
+    }
+    
+    func updateAmount(amount: Int) {
+        amountLabel.text = String(amount)
     }
     
     private func prepareView() {
@@ -110,15 +114,17 @@ class CartTableViewCell: UITableViewCell {
         applyConstraints()
     }
     
-    @objc private func amountDecreaseButtonClicked() {
-        guard let product = product else { return }
-        viewModel?.decreaseAmount(of: product)
+    @objc func amountDecreaseButtonClicked() {
+        guard let index = index else { return }
+        presenter?.decreaseAmount(at: index)
     }
     
-    @objc private func amountIncreaseButtonClicked() {
-        guard let product = product else { return }
-        viewModel?.increaseAmount(of: product)
+    @objc func amountIncreaseButtonClicked() {
+        guard let index = index else { return }
+        presenter?.increaseAmount(at: index)
     }
+    
+    // MARK: - Constraints
     
     private func applyConstraints() {
         productImage.snp.makeConstraints { make in

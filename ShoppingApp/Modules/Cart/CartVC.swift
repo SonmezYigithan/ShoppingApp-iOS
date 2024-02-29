@@ -18,7 +18,9 @@ class CartVC: UIViewController {
     
     // MARK: - Properties
     
-    lazy var viewModel: CartVMProtocol = CartVM()
+    var presenter: CartPresenterProtocol?
+    
+    var products = [ProductCartPresentation]()
     
     let tableView: UITableView = {
         let tableView = UITableView()
@@ -35,16 +37,22 @@ class CartVC: UIViewController {
         button.configuration?.title = "Checkout"
         return button
     }()
-
+    
+    private let spinner: UIActivityIndicatorView = {
+        let spinner = UIActivityIndicatorView()
+        spinner.tintColor = .label
+        spinner.style = .large
+        return spinner
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.view = self
         prepareView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewModel.viewWillAppear()
+        presenter?.load()
     }
     
     // MARK: - LifeCycle
@@ -54,6 +62,7 @@ class CartVC: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(tableView)
         view.addSubview(checkoutButton)
+        view.addSubview(spinner)
         
         checkoutButton.addTarget(self, action: #selector(checkoutButtonClicked), for: .touchUpInside)
         
@@ -64,7 +73,7 @@ class CartVC: UIViewController {
     }
     
     @objc private func checkoutButtonClicked() {
-        viewModel.checkout()
+        presenter?.checkout()
     }
     
     // MARK: - Constraints
@@ -80,19 +89,23 @@ class CartVC: UIViewController {
             make.trailing.equalTo(view.safeAreaLayoutGuide).offset(-15)
             make.height.equalTo(60)
         }
+        
+        spinner.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
 
 extension CartVC: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.getProductCountInCart()
+        return products.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: Cell.identifier, for: indexPath) as? Cell else {
             return UITableViewCell()
         }
-        cell.configure(with: viewModel.getProduct(at: indexPath.row), viewModel: viewModel)
+        cell.configure(with: products[indexPath.row], presenter: presenter, index: indexPath.row)
         cell.selectionStyle = .none
         return cell
     }
@@ -103,7 +116,8 @@ extension CartVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let delete = UIContextualAction(style: .destructive, title: "Delete") { (action, view, success) in
-            self.viewModel.deleteProduct(at: indexPath.row)
+            self.presenter?.deleteProduct(at: indexPath.row)
+            self.products.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
         }
         
@@ -112,8 +126,26 @@ extension CartVC: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension CartVC: CartVCProtocol {
-    func reloadTableView() {
-        tableView.reloadData()
+extension CartVC: CartViewProtocol {
+    func handleOutput(_ output: CartPresenterOutput) {
+        switch output {
+        case .setLoading(let isLoading):
+            if isLoading {
+                spinner.startAnimating()
+            }else {
+                spinner.stopAnimating()
+            }
+        case .showProducts(let products):
+            self.products = products
+            tableView.reloadData()
+        case .updateAmount((let index, let amount)):
+            let indexPath = IndexPath(row: index, section: 0)
+            guard let cell = tableView.cellForRow(at: indexPath) as? Cell else { return }
+            cell.updateAmount(amount: amount)
+        case .showCheckoutSuccess:
+            let indexPaths = products.indices.map { IndexPath(row: $0, section: 0) }
+            products.removeAll()
+            self.tableView.deleteRows(at: indexPaths, with: .automatic)
+        }
     }
 }

@@ -1,0 +1,18 @@
+//
+//  CartBuilder.swift
+//  ShoppingApp
+//
+//  Created by Yiğithan Sönmez on 29.02.2024.
+//
+
+import Foundation
+
+class CartBuilder {
+    static func make() -> CartVC {
+        let view = CartVC()
+        let interactor = CartInteractor(service: app.service)
+        let presenter = CartPresenter(view: view, interactor: interactor)
+        view.presenter = presenter
+        return view
+    }
+}
