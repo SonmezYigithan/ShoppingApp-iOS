@@ -12,6 +12,7 @@ class CartEmptyView: UIView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(systemName: "cart")
+        imageView.tintColor = .greenTint
         return imageView
     }()
     

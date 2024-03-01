@@ -15,6 +15,7 @@ final class AddToCartSuccessView: UIViewController {
     private let button: UIButton = {
         let button = UIButton()
         button.configuration = .filled()
+        button.tintColor = .greenTint
         button.configuration?.title = "Go To Cart"
         return button
     }()
@@ -28,6 +29,7 @@ final class AddToCartSuccessView: UIViewController {
     
     private let imageView: UIImageView = {
         let image = UIImageView()
+        image.tintColor = .greenTint
         image.image = UIImage(systemName: "checkmark.circle.fill")
         return image
     }()

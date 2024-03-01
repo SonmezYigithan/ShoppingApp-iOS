@@ -32,7 +32,7 @@ class CartVC: UIViewController {
     let checkoutButton: CheckoutButton = {
         let button = CheckoutButton()
         button.configuration = .plain()
-        button.backgroundColor = UIColor(hex: "#599165")
+        button.backgroundColor = .greenTint
         button.tintColor = .white
         button.layer.cornerRadius = 20
         button.configuration?.title = "Checkout"

@@ -44,7 +44,7 @@ class ProductDetailsVC: UIViewController {
     let addToCartButton: UIButton = {
         let button = UIButton()
         button.configuration = .plain()
-        button.backgroundColor = .systemGreen
+        button.backgroundColor = .greenTint
         button.tintColor = .white
         button.layer.cornerRadius = 20
         button.configuration?.title = "Add To Cart"

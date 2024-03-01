@@ -88,6 +88,7 @@ class HomeVC: UIViewController {
     
     private func prepareView() {
         view.backgroundColor = .systemBackground
+        
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubview(bannerCollectionView)

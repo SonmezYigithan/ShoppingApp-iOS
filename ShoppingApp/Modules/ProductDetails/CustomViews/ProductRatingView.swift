@@ -85,6 +85,7 @@ final class ProductRatingView: UIView {
     private func createStars() {
         for _ in 0...4 {
             let star = UIImageView(image: UIImage(systemName: "star"))
+            star.tintColor = .greenTint
             stars.append(star)
             starsStack.addArrangedSubview(star)
         }

@@ -43,7 +43,7 @@ final class CheckoutContentView: UIView {
     let buyNowButton: UIButton = {
         let button = UIButton()
         button.configuration = .plain()
-        button.backgroundColor = UIColor(hex: "#599165")
+        button.backgroundColor = .greenTint
         button.tintColor = .white
         button.layer.cornerRadius = 20
         button.configuration?.title = "Buy Now"
