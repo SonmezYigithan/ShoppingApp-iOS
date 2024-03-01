@@ -19,6 +19,10 @@ This is a simple shopping app built using the VIPER architecture in Swift. The a
 
 ## Screenshots
 
+<img src="Screenshots/screenshot1.png" width=200 height=433> <img src="Screenshots/screenshot2.png" width=200 height=433>
+<img src="Screenshots/screenshot3.png" width=200 height=433> <img src="Screenshots/screenshot4.png" width=200 height=433>
+<img src="Screenshots/screenshot5.png" width=200 height=433> <img src="Screenshots/screenshot6.png" width=200 height=433>
+<img src="Screenshots/screenshot7.png" width=200 height=433> <img src="Screenshots/screenshot8.png" width=200 height=433>
 
 ## VIPER Architecture
 
