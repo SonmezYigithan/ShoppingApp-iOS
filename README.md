@@ -13,6 +13,7 @@ This is a simple shopping app built using the VIPER architecture in Swift. The a
 
 ### Technologies and Libraries
 - VIPER
+- CoreData
 - Alamofire
 - Kingfisher
 - Snapkit
