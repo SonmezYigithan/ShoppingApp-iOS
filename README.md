@@ -18,6 +18,10 @@ This is a simple shopping app built using the VIPER architecture in Swift. The a
 - Kingfisher
 - Snapkit
 
+## App demo
+
+[AppDemo Video](https://user-images.githubusercontent.com/47990723/190715554-a5b282a4-cec2-427a-bdfb-41662ab31236.mp4)
+
 ## Screenshots
 
 <img src="Screenshots/screenshot1.png" width=200 height=433> <img src="Screenshots/screenshot2.png" width=200 height=433>
