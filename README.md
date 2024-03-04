@@ -20,7 +20,7 @@ This is a simple shopping app built using the VIPER architecture in Swift. The a
 
 ## App demo
 
-[AppDemo Video](https://user-images.githubusercontent.com/47990723/190715554-a5b282a4-cec2-427a-bdfb-41662ab31236.mp4)
+[AppDemo Video](https://github.com/SonmezYigithan/ShoppingApp-iOS/assets/30535277/4f11bfd5-b6e0-4b61-ba7e-623b2ddc32d0)
 
 ## Screenshots
 
