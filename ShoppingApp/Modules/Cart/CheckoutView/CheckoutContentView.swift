@@ -98,7 +98,7 @@ final class CheckoutContentView: UIView {
         let tax = (subtotal / 100) * 18
         let shipment = 23.80
         
-        self.subtotal.price.text = String(subtotal)
+        self.subtotal.price.text = String(format: "%.2f", subtotal)
         self.tax.price.text = String(format: "%.2f", tax)
         self.shipment.price.text = String(format: "%.2f", shipment)
         self.total.price.text = "$" + String(format: "%.2f", subtotal + tax + shipment)
